@@ -8,6 +8,8 @@
     "start": "tsx 01_quickstart.ts",
     "start:02": "tsx 02_prompt_template.ts",
     "start:03": "tsx 03_output_parser.ts",
+    "start:04": "tsx 04_chat_history.ts",
+    "start:05": "tsx 05_parallel_chain.ts",
     "dev": "tsx 01_quickstart.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

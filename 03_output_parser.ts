@@ -36,10 +36,10 @@ async function main() {
   console.log("🇺🇸 English:", english);
 
   const japanese = await translationChain.invoke({
-    targetLang: "日本語",
+    targetLang: "文言文",
     text: "LangChain 把 Prompt、Model、Parser 拼成一条链，调用起来非常直观。",
   });
-  console.log("🇯🇵 日本語:", japanese);
+  console.log("文言文:", japanese);
 
   // 6. 同一根链也能 .stream()，逐块拿到译文（打字机效果）
   console.log("\n--- 流式调用（法语）---");
