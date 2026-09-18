@@ -1,0 +1,27 @@
+{
+  "name": "langchain-ts-demo",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx 01_quickstart.ts",
+    "start:02": "tsx 02_prompt_template.ts",
+    "start:03": "tsx 03_output_parser.ts",
+    "dev": "tsx 01_quickstart.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^26.6.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@langchain/core": "^1.2.11",
+    "@langchain/openai": "^1.5.13",
+    "dotenv": "^18.0.0"
+  }
+}
