@@ -10,6 +10,9 @@
     "start:03": "tsx 03_output_parser.ts",
     "start:04": "tsx 04_chat_history.ts",
     "start:05": "tsx 05_parallel_chain.ts",
+    "start:06": "tsx 06_rag_basic.ts",
+    "start:07": "tsx 07_structured_output.ts",
+    "start:08": "tsx 08_agent_basic.ts",
     "dev": "tsx 01_quickstart.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
