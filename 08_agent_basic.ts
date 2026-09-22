@@ -52,6 +52,26 @@ const toolsByName = new Map<string, (typeof tools)[number]>(
   tools.map((t) => [t.name, t]),
 );
 
+// 兼容个别模型（如 abab6.5s-chat）不按结构化 tool_calls 返回，
+// 而把调用写成了正文里的 code block，例如：
+//   ```typescript
+//   functions.add({"a":9999,"b":1999})
+//   ```
+// 这里把它解析回 { name, args }，解析不到返回 null。
+function parseTextToolCall(
+  content: string,
+): { name: string; args: Record<string, unknown> } | null {
+  const cleaned = content.replace(/```[\w-]*\n?/g, ""); // 去掉 markdown 代码围栏
+  const m = cleaned.match(/functions\.([A-Za-z_]\w*)\s*\((\{[\s\S]*\})\)/);
+  if (!m || !m[1] || !m[2]) return null;
+  try {
+    const args = JSON.parse(m[2]) as Record<string, unknown>;
+    return { name: m[1], args };
+  } catch {
+    return null;
+  }
+}
+
 async function main() {
   const model = new ChatOpenAI({
     modelName: "abab6.5s-chat",
@@ -82,10 +102,33 @@ async function main() {
     for (let round = 0; round < maxRounds; round++) {
       console.log(`\n🔁 第 ${round + 1} 轮 · 消息条数 ${messages.length}`);
       const aiMsg = (await model.invoke(messages)) as AIMessage;
-      const toolCalls: ToolCall[] = aiMsg.tool_calls ?? [];
+      let toolCalls: ToolCall[] = aiMsg.tool_calls ?? [];
       console.log(
         `   模型回复：content=${JSON.stringify(aiMsg.content)}, tool_calls=${toolCalls.length}`,
       );
+      // 兼容：模型没走结构化 tool_calls，而把调用写成了正文 code block
+      // （abab6.5s-chat 在复合问题里出现过：functions.add({...})）
+      if (toolCalls.length === 0) {
+        const raw =
+          typeof aiMsg.content === "string"
+            ? aiMsg.content
+            : JSON.stringify(aiMsg.content);
+        const textCall = parseTextToolCall(raw);
+        if (textCall) {
+          const syntheticCall: ToolCall = {
+            name: textCall.name,
+            args: textCall.args,
+            id: `text-r${round}`,
+            type: "tool_call",
+          };
+          // 升级成结构化 tool_call，保证后面追加的 ToolMessage 与 tool_call_id 匹配
+          aiMsg.tool_calls = [syntheticCall];
+          toolCalls = [syntheticCall];
+          console.log(
+            `   ↩️  模型把调用写成了文本，按工具调用处理：${textCall.name}`,
+          );
+        }
+      }
       // 没有工具调用 → 模型给了最终答案，结束
       if (toolCalls.length === 0) {
         const final =
