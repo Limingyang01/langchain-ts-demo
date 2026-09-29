@@ -5,11 +5,13 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "new": "tsx basic_agent.ts",
     "start": "tsx 01_quickstart.ts",
     "start:02": "tsx 02_prompt_template.ts",
     "start:03": "tsx 03_output_parser.ts",
     "start:04": "tsx 04_chat_history.ts",
     "start:05": "tsx 05_parallel_chain.ts",
+    "start:05b": "tsx 05b_runnable_basics.ts",
     "start:06": "tsx 06_rag_basic.ts",
     "start:07": "tsx 07_structured_output.ts",
     "start:08": "tsx 08_agent_basic.ts",
